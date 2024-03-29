@@ -3,36 +3,15 @@ package systems
 import (
 	"crypto/rand"
 	"gnark/circuits/hashes"
-	"gnark/circuits/mimc"
 	"gnark/utils"
 	"math/big"
 	"os"
 
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark/backend/groth16"
-	"github.com/consensys/gnark/backend/witness"
-	"github.com/consensys/gnark/constraint"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
 )
-
-// your circuit type
-type CircuitInterface struct {
-	mimc.Circuit
-}
-
-type G16 struct {
-	circuit CircuitInterface
-
-	r1cs constraint.ConstraintSystem
-	pk   groth16.ProvingKey
-	vk   groth16.VerifyingKey
-
-	witnessFull   witness.Witness
-	witnessPublic witness.Witness
-	proof         groth16.Proof
-	R1sc          constraint.ConstraintSystem
-}
 
 func (g16 *G16) Prove() error {
 	var err error
@@ -69,14 +48,14 @@ func (g16 *G16) getWitness() error {
 		return err
 	}
 
-	saveWitness(g16.witnessFull, "witness/witness_g16.wtns")
+	utils.SaveWitness(g16.witnessFull, WitnessFilePathG16)
 
 	g16.witnessPublic, err = frontend.NewWitness(&g16.circuit, ecc.BN254.ScalarField(), frontend.PublicOnly())
 	if err != nil {
 		return err
 	}
 
-	saveWitness(g16.witnessPublic, "witness/witnessPub_g16.wtns")
+	utils.SaveWitness(g16.witnessPublic, WitnessPublicFilePathG16)
 
 	return nil
 }
@@ -89,70 +68,171 @@ func (g16 *G16) Verify() error {
 	return nil
 }
 
-func (g16 *G16) Setup() error {
+func (g16 *G16) Compile() error {
 	var err error
 	g16.r1cs, err = frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &g16.circuit)
 	if err != nil {
 		return err
 	}
 
-	g16.R1sc = g16.r1cs
-	g16.pk, g16.vk, err = g16.setupG16()
+	err = g16.SaveR1CS()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g16 *G16) Setup() error {
+	var err error
+	g16.pk, g16.vk, err = groth16.Setup(g16.r1cs)
+	if err != nil {
+		return err
+	}
+	{
+		file, err := os.Create(VerificationKeyPathG16)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err = g16.vk.WriteRawTo(file)
+		if err != nil {
+			return err
+		}
+	}
+	{
+		file, err := os.Create(ProvingKeyPathG16)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err = g16.pk.WriteRawTo(file)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = g16.ExportSolidity()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g16 *G16) ExportSolidity() error {
+	file, err := os.Create(ContractFilePathG16)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	err = g16.vk.ExportSolidity(file)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g16 *G16) setupG16() (groth16.ProvingKey, groth16.VerifyingKey, error) {
-	pk, vk, err := groth16.Setup(g16.r1cs)
-	if err != nil {
-		return nil, nil, err
-	}
-	{
-		f, err := os.Create("keys/mimc.g16.vk")
-		if err != nil {
-			return nil, nil, err
-		}
-		_, err = vk.WriteRawTo(f)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-	{
-		f, err := os.Create("keys/mimc.g16.pk")
-		if err != nil {
-			return nil, nil, err
-		}
-		_, err = pk.WriteRawTo(f)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	{
-		f, err := os.Create("contracts/contract_g16.sol")
-		if err != nil {
-			return nil, nil, err
-		}
-		err = vk.ExportSolidity(f)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	return pk, vk, nil
-}
-
-func saveWitness(witness witness.Witness, filename string) error {
-	file, err := os.Create(filename)
+func (g16 *G16) SaveR1CS() error {
+	file, err := os.Create(R1CSFilePathG16)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	_, err = witness.WriteTo(file)
+	_, err = g16.r1cs.WriteTo(file)
 
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g16 *G16) LoadProvingKey(filename string) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = g16.pk.ReadFrom(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g16 *G16) LoadVerifyingKey(filename string) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = g16.vk.ReadFrom(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g16 *G16) LoadProof(filename string) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = g16.proof.ReadFrom(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g16 *G16) LoadWitness(filename string) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = g16.witnessFull.ReadFrom(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g16 *G16) LoadWitnessPublic(filename string) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = g16.witnessPublic.ReadFrom(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g16 *G16) LoadR1CS(filename string) error {
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = g16.r1cs.ReadFrom(file)
 	if err != nil {
 		return err
 	}

@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"gnark/circuits/mimc"
 	"os"
 
 	"github.com/consensys/gnark-crypto/ecc"
@@ -11,53 +10,94 @@ import (
 	"github.com/consensys/gnark/test"
 )
 
-func GeneratePlonk() error {
-	var circuit mimc.Circuit
-
-	scs, err := frontend.Compile(ecc.BN254.ScalarField(), scs.NewBuilder, &circuit)
+func (plonk *PLONK) Compile() error {
+	var err error
+	plonk.scs, err = frontend.Compile(ecc.BN254.ScalarField(), scs.NewBuilder, &plonk.circuit)
 	if err != nil {
 		return err
 	}
 
-	srs, err := test.NewKZGSRS(scs)
+	plonk.srs, err = test.NewKZGSRS(plonk.scs)
 	if err != nil {
 		return err
 	}
 
-	pk, vk, err := plonk.Setup(scs, srs)
+	plonk.SaveSCS()
+
+	return nil
+}
+
+func (pl *PLONK) Setup() error {
+	var err error
+	pl.pk, pl.vk, err = plonk.Setup(pl.scs, pl.srs)
 	if err != nil {
 		return err
 	}
 	{
-		f, err := os.Create("keys/mimc.plonk.vk")
+		file, err := os.Create(VerificationKeyPathPLONK)
 		if err != nil {
 			return err
 		}
-		_, err = vk.WriteTo(f)
+		_, err = pl.vk.WriteTo(file)
 		if err != nil {
 			return err
 		}
+		defer file.Close()
 	}
 	{
-		f, err := os.Create("keys/mimc.plonk.pk")
+		file, err := os.Create(ProvingKeyPathPLONK)
 		if err != nil {
 			return err
 		}
-		_, err = pk.WriteTo(f)
+		_, err = pl.pk.WriteTo(file)
 		if err != nil {
 			return err
 		}
+		defer file.Close()
 	}
+	pl.ExportSolidity()
 
-	{
-		f, err := os.Create("contracts/contract_plonk.sol")
-		if err != nil {
-			return err
-		}
-		err = vk.ExportSolidity(f)
-		if err != nil {
-			return err
-		}
+	return nil
+}
+
+func (plonk *PLONK) ExportSolidity() error {
+	file, err := os.Create(ContractFilePathPLONK)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	err = plonk.vk.ExportSolidity(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (plonk *PLONK) SaveSCS() error {
+	file, err := os.Create(SCSFilePathPLONK)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = plonk.scs.WriteTo(file)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (plonk *PLONK) SaveSRS() error {
+	file, err := os.Create(SRSFilePathPLONK)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = plonk.srs.WriteTo(file)
+	if err != nil {
+		return err
 	}
 	return nil
 }
