@@ -1,6 +1,11 @@
 package systems
 
 import (
+	"crypto/rand"
+	"fmt"
+	"gnark/circuits/hashes"
+	"gnark/utils"
+	"math/big"
 	"os"
 
 	"github.com/consensys/gnark-crypto/ecc"
@@ -10,26 +15,87 @@ import (
 	"github.com/consensys/gnark/test"
 )
 
-func (plonk *PLONK) Compile() error {
+func (pl *PLONK) Prove() error {
 	var err error
-	plonk.scs, err = frontend.Compile(ecc.BN254.ScalarField(), scs.NewBuilder, &plonk.circuit)
+
+	// Create a limit: 2^254
+	limit := new(big.Int).Exp(big.NewInt(2), big.NewInt(254), nil)
+	// Generate a random number in the range [0, 2^254)
+	randNum, _ := rand.Int(rand.Reader, limit)
+	perImage := randNum.String()
+	hash := hashes.MimcHashBN254(perImage)
+
+	// enter inputs
+	pl.circuit.PreImage = perImage
+	pl.circuit.Hash = hash
+
+	pl.getWitness()
+
+	pl.proof, err = plonk.Prove(pl.ccs, pl.pk, pl.witnessFull)
 	if err != nil {
 		return err
 	}
 
-	plonk.srs, err = test.NewKZGSRS(plonk.scs)
+	// public inputs
+	// utils.GetCalldataG16(pl.proof, []string{hash})
+	return nil
+}
+
+func (pl *PLONK) getWitness() error {
+
+	var err error
+
+	pl.witnessFull, err = frontend.NewWitness(&pl.circuit, ecc.BN254.ScalarField())
 	if err != nil {
 		return err
 	}
 
-	plonk.SaveSCS()
+	err = utils.SaveWitness(pl.witnessFull, WitnessFilePathPLONK)
+	if err != nil {
+		return err
+	}
+
+	pl.witnessPublic, err = frontend.NewWitness(&pl.circuit, ecc.BN254.ScalarField(), frontend.PublicOnly())
+	if err != nil {
+		return err
+	}
+
+	err = utils.SaveWitness(pl.witnessPublic, WitnessPublicFilePathPLONK)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pl *PLONK) Verify() error {
+	err := plonk.Verify(pl.proof, pl.vk, pl.witnessPublic)
+	if err != nil {
+		return fmt.Errorf("Verify error: %w", err)
+	}
+	return nil
+}
+
+func (pl *PLONK) Compile() error {
+	var err error
+	pl.ccs, err = frontend.Compile(ecc.BN254.ScalarField(), scs.NewBuilder, &pl.circuit)
+	if err != nil {
+		return err
+	}
+
+	pl.srs, err = test.NewKZGSRS(pl.ccs)
+	if err != nil {
+		return err
+	}
+
+	pl.SaveSCS()
 
 	return nil
 }
 
 func (pl *PLONK) Setup() error {
 	var err error
-	pl.pk, pl.vk, err = plonk.Setup(pl.scs, pl.srs)
+	pl.pk, pl.vk, err = plonk.Setup(pl.ccs, pl.srs)
 	if err != nil {
 		return err
 	}
@@ -55,49 +121,78 @@ func (pl *PLONK) Setup() error {
 		}
 		defer file.Close()
 	}
+
 	pl.ExportSolidity()
 
 	return nil
 }
 
-func (plonk *PLONK) ExportSolidity() error {
+func (pl *PLONK) ExportSolidity() error {
 	file, err := os.Create(ContractFilePathPLONK)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	err = plonk.vk.ExportSolidity(file)
+	err = pl.vk.ExportSolidity(file)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (plonk *PLONK) SaveSCS() error {
+func (pl *PLONK) SaveSCS() error {
 	file, err := os.Create(SCSFilePathPLONK)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	_, err = plonk.scs.WriteTo(file)
+	_, err = pl.ccs.WriteTo(file)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (plonk *PLONK) SaveSRS() error {
+func (pl *PLONK) SaveSRS() error {
 	file, err := os.Create(SRSFilePathPLONK)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	_, err = plonk.srs.WriteTo(file)
+	_, err = pl.srs.WriteTo(file)
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
+// Wrong data: the proof fails
+// func (pl *PLONK) BadVerify() error {
+// 	var err error
+// 	var publicWitness CircuitInterface
+// 	publicWitness.Hash = "123456789"
+// 	witnessPublic, err := frontend.NewWitness(&publicWitness, ecc.BN254.ScalarField(), frontend.PublicOnly())
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	pk, vk, err := plonk.Setup(pl.ccs, pl.srs)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	proof, err := plonk.Prove(pl.ccs, pk, pl.witnessFull)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	err = plonk.Verify(proof, vk, witnessPublic)
+// 	if err != nil {
+// 		return fmt.Errorf("BadVerify error: %w", err)
+// 	}
+
+// 	return nil
+// }

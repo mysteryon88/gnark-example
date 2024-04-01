@@ -25,7 +25,7 @@ func (g16 *G16) Prove() error {
 
 	// enter inputs
 	g16.circuit.PreImage = perImage
-	g16.circuit.Hash = hashes.MimcHashBN254(perImage)
+	g16.circuit.Hash = hash
 
 	g16.getWitness()
 
@@ -48,14 +48,20 @@ func (g16 *G16) getWitness() error {
 		return err
 	}
 
-	utils.SaveWitness(g16.witnessFull, WitnessFilePathG16)
+	err = utils.SaveWitness(g16.witnessFull, WitnessFilePathG16)
+	if err != nil {
+		return err
+	}
 
 	g16.witnessPublic, err = frontend.NewWitness(&g16.circuit, ecc.BN254.ScalarField(), frontend.PublicOnly())
 	if err != nil {
 		return err
 	}
 
-	utils.SaveWitness(g16.witnessPublic, WitnessPublicFilePathG16)
+	err = utils.SaveWitness(g16.witnessPublic, WitnessPublicFilePathG16)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

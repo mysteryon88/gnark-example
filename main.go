@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gnark/systems"
 	"gnark/utils"
 )
@@ -9,7 +10,7 @@ func main() {
 	// you need these directories
 	utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
 
-	Groth16()
+	//Groth16()
 	Plonk()
 }
 
@@ -23,6 +24,23 @@ func Groth16() {
 
 func Plonk() {
 	plonk := systems.PLONK{}
-	plonk.Compile()
-	plonk.Setup()
+	err := plonk.Compile()
+	if err != nil {
+		fmt.Println("Compile error:", err)
+	}
+
+	err = plonk.Setup()
+	if err != nil {
+		fmt.Println("Setup error:", err)
+	}
+
+	err = plonk.Prove()
+	if err != nil {
+		fmt.Println("Prove error:", err)
+	}
+
+	err = plonk.Verify()
+	if err != nil {
+		fmt.Println(err)
+	}
 }

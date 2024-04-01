@@ -48,7 +48,7 @@ type G16 struct {
 type PLONK struct {
 	circuit CircuitInterface
 
-	scs constraint.ConstraintSystem
+	ccs constraint.ConstraintSystem
 	srs kzg.SRS
 
 	pk plonk.ProvingKey
