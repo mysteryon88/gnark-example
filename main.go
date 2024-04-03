@@ -2,16 +2,32 @@ package main
 
 import (
 	"fmt"
+	"time"
+
+	"gnark/circuits/recursive/g16"
 	"gnark/systems"
-	"gnark/utils"
 )
 
 func main() {
 	// you need these directories
-	utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
+	//utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
 
-	Groth16()
+	//Groth16()
 	//Plonk()
+
+	recursiveGroth16PerformanceTest()
+}
+
+func recursiveGroth16PerformanceTest() {
+	start := time.Now()
+	g16.BLS12_337inBW6_761()
+	duration := time.Since(start)
+	fmt.Printf("Execution time: %v ms\n", duration.Milliseconds())
+
+	start = time.Now()
+	g16.BN254inBN254()
+	duration = time.Since(start)
+	fmt.Printf("Execution time: %v ms\n", duration.Milliseconds())
 }
 
 func Groth16() {

@@ -1,4 +1,4 @@
-// Copyright 2020 ConsenSys AG
+// https://github.com/Consensys/gnark/blob/master/examples/mimc/mimc.go
 
 package mimc
 
