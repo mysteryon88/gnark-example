@@ -2,8 +2,8 @@ package systems
 
 import (
 	"crypto/rand"
-	"gnark/circuits/hashes"
 	"gnark/utils"
+	"gnark/utils/hashes"
 	"math/big"
 	"os"
 
