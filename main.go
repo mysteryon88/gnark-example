@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"gnark/circuits/recursive/g16"
+	"gnark/circuits/recursive/g16_v0_9_1"
 	"gnark/systems"
 )
 
@@ -20,12 +20,12 @@ func main() {
 
 func recursiveGroth16PerformanceTest() {
 	start := time.Now()
-	g16.BLS12_337inBW6_761()
+	g16_v0_9_1.BLS12_337inBW6_761()
 	duration := time.Since(start)
 	fmt.Printf("Execution time: %v ms\n", duration.Milliseconds())
 
 	start = time.Now()
-	g16.BN254inBN254()
+	g16_v0_9_1.BN254inBN254()
 	duration = time.Since(start)
 	fmt.Printf("Execution time: %v ms\n", duration.Milliseconds())
 }

@@ -1,6 +1,6 @@
 // https://pkg.go.dev/github.com/consensys/gnark/std/recursion/groth16
 
-package g16
+package g16_v0_9_1
 
 import (
 	"gnark/circuits/recursive"

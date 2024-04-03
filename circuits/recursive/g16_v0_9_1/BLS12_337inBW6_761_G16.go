@@ -1,6 +1,6 @@
 // https://pkg.go.dev/github.com/consensys/gnark/std/recursion/groth16
 
-package g16
+package g16_v0_9_1
 
 import (
 	"fmt"
@@ -9,30 +9,32 @@ import (
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
-	"github.com/consensys/gnark/std/algebra/emulated/sw_bn254"
+	"github.com/consensys/gnark/std/algebra/native/sw_bls12377"
 	stdgroth16 "github.com/consensys/gnark/std/recursion/groth16"
 )
 
-// Example of verifying recursively BN254 Groth16 proof in BN254 Groth16 circuit using field emulation
-func BN254inBN254() {
+// Example of verifying recursively BLS12-377 Groth16 proof in BW6-761 Groth16 circuit using chain of curves.
+// It is significantly more efficient than using field emulation, but requires a specific chain of inner and outer curves.
+
+func BLS12_337inBW6_761() {
 	// compute the proof which we want to verify recursively
-	innerCcs, innerVK, innerWitness, innerProof := computeInnerProof(ecc.BN254.ScalarField())
+	innerCcs, innerVK, innerWitness, innerProof := computeInnerProof(ecc.BLS12_377.ScalarField())
 
 	// initialize the witness elements
-	circuitVk, err := stdgroth16.ValueOfVerifyingKey[sw_bn254.G1Affine, sw_bn254.G2Affine, sw_bn254.GTEl](innerVK)
+	circuitVk, err := stdgroth16.ValueOfVerifyingKey[sw_bls12377.G1Affine, sw_bls12377.G2Affine, sw_bls12377.GT](innerVK)
 	if err != nil {
 		panic(err)
 	}
-	circuitWitness, err := stdgroth16.ValueOfWitness[sw_bn254.Scalar, sw_bn254.G1Affine](innerWitness)
+	circuitWitness, err := stdgroth16.ValueOfWitness[sw_bls12377.Scalar, sw_bls12377.G1Affine](innerWitness)
 	if err != nil {
 		panic(err)
 	}
-	circuitProof, err := stdgroth16.ValueOfProof[sw_bn254.G1Affine, sw_bn254.G2Affine](innerProof)
+	circuitProof, err := stdgroth16.ValueOfProof[sw_bls12377.G1Affine, sw_bls12377.G2Affine](innerProof)
 	if err != nil {
 		panic(err)
 	}
 
-	outerAssignment := &OuterCircuit[sw_bn254.Scalar, sw_bn254.G1Affine, sw_bn254.G2Affine, sw_bn254.GTEl]{
+	outerAssignment := &OuterCircuit[sw_bls12377.Scalar, sw_bls12377.G1Affine, sw_bls12377.G2Affine, sw_bls12377.GT]{
 		InnerWitness: circuitWitness,
 		Proof:        circuitProof,
 		VerifyingKey: circuitVk,
@@ -42,13 +44,15 @@ func BN254inBN254() {
 	// compiled inner circuit to deduce the required size for the outer witness
 	// using functions [stdgroth16.PlaceholderWitness] and
 	// [stdgroth16.PlaceholderVerifyingKey]
-	outerCircuit := &OuterCircuit[sw_bn254.Scalar, sw_bn254.G1Affine, sw_bn254.G2Affine, sw_bn254.GTEl]{
-		InnerWitness: stdgroth16.PlaceholderWitness[sw_bn254.Scalar](innerCcs),
-		VerifyingKey: stdgroth16.PlaceholderVerifyingKey[sw_bn254.G1Affine, sw_bn254.G2Affine, sw_bn254.GTEl](innerCcs),
+	outerCircuit := &OuterCircuit[sw_bls12377.Scalar, sw_bls12377.G1Affine, sw_bls12377.G2Affine, sw_bls12377.GT]{
+		InnerWitness: stdgroth16.PlaceholderWitness[sw_bls12377.Scalar](innerCcs),
+		VerifyingKey: stdgroth16.PlaceholderVerifyingKey[sw_bls12377.G1Affine, sw_bls12377.G2Affine, sw_bls12377.GT](innerCcs),
 	}
 
-	// compile the outer circuit
-	ccs, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, outerCircuit)
+	// compile the outer circuit. because we are using 2-chains then the outer
+	// curve must correspond to the inner curve. For inner BLS12-377 the outer
+	// curve is BW6-761.
+	ccs, err := frontend.Compile(ecc.BW6_761.ScalarField(), r1cs.NewBuilder, outerCircuit)
 	if err != nil {
 		panic("compile failed: " + err.Error())
 	}
@@ -60,7 +64,7 @@ func BN254inBN254() {
 	}
 
 	// create prover witness from the assignment
-	secretWitness, err := frontend.NewWitness(outerAssignment, ecc.BN254.ScalarField())
+	secretWitness, err := frontend.NewWitness(outerAssignment, ecc.BW6_761.ScalarField())
 	if err != nil {
 		panic("secret witness failed: " + err.Error())
 	}
