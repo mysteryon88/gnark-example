@@ -10,8 +10,8 @@ func main() {
 	// you need these directories
 	utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
 
-	//Groth16()
-	Plonk()
+	Groth16()
+	//Plonk()
 }
 
 func Groth16() {

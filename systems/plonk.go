@@ -23,7 +23,7 @@ func (pl *PLONK) Prove() error {
 	// Generate a random number in the range [0, 2^254)
 	randNum, _ := rand.Int(rand.Reader, limit)
 	perImage := randNum.String()
-	hash := hashes.MimcHashBN254(perImage)
+	hash := hashes.MimcHash_BN254(perImage)
 
 	// enter inputs
 	pl.circuit.PreImage = perImage
