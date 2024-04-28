@@ -12,7 +12,9 @@ import (
 	"github.com/consensys/gnark/backend/plonk"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/scs"
-	"github.com/consensys/gnark/test"
+
+	cs "github.com/consensys/gnark/constraint/bn254"
+	"github.com/consensys/gnark/test/unsafekzg"
 )
 
 func (pl *PLONK) Prove() error {
@@ -83,7 +85,8 @@ func (pl *PLONK) Compile() error {
 		return err
 	}
 
-	pl.srs, err = test.NewKZGSRS(pl.ccs)
+	scs := pl.ccs.(*cs.SparseR1CS)
+	pl.srs, pl.srsLagrange, err = unsafekzg.NewSRS(scs)
 	if err != nil {
 		return err
 	}
@@ -95,7 +98,7 @@ func (pl *PLONK) Compile() error {
 
 func (pl *PLONK) Setup() error {
 	var err error
-	pl.pk, pl.vk, err = plonk.Setup(pl.ccs, pl.srs)
+	pl.pk, pl.vk, err = plonk.Setup(pl.ccs, pl.srs, pl.srsLagrange)
 	if err != nil {
 		return err
 	}
@@ -168,31 +171,3 @@ func (pl *PLONK) SaveSRS() error {
 	}
 	return nil
 }
-
-// Wrong data: the proof fails
-// func (pl *PLONK) BadVerify() error {
-// 	var err error
-// 	var publicWitness CircuitInterface
-// 	publicWitness.Hash = "123456789"
-// 	witnessPublic, err := frontend.NewWitness(&publicWitness, ecc.BN254.ScalarField(), frontend.PublicOnly())
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	pk, vk, err := plonk.Setup(pl.ccs, pl.srs)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	proof, err := plonk.Prove(pl.ccs, pk, pl.witnessFull)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	err = plonk.Verify(proof, vk, witnessPublic)
-// 	if err != nil {
-// 		return fmt.Errorf("BadVerify error: %w", err)
-// 	}
-
-// 	return nil
-// }

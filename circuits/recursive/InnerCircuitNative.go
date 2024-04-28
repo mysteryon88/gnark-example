@@ -1,4 +1,4 @@
-// https://pkg.go.dev/github.com/consensys/gnark/std/recursion/groth16
+// https://pkg.go.dev/github.com/consensys/gnark@v0.10.0/std/recursion/groth16
 
 package recursive
 
