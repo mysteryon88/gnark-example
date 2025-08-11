@@ -9,6 +9,10 @@ zkSNARK in golang for Ethereum (groth16 and plonk)
 - In the `systems` directory, you can create proofs and verify them
   - You need to replace the `interface` and add `inputs`
 
+# Recursive proofs
+
+- [Performance tests](https://github.com/mysteryon88/gnark-example/blob/main/circuits/recursive/README.md)
+
 # elliptic curves
 
 - gnark supports six elliptic curves:
