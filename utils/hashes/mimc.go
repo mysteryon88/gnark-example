@@ -26,6 +26,25 @@ func MimcHash_BN254(input string) string {
 	return hash
 }
 
+func MimcHash_BLS12_381(input string) string {
+	var x fr.Element
+	mimcHash := hash.MIMC_BLS12_381.New()
+	// to fild
+	x.SetString(input)
+	b := x.Bytes()
+	_, err := mimcHash.Write(b[:])
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	hashB := mimcHash.Sum(nil)
+	x.SetBytes(hashB)
+	hash := x.String()
+
+	// fmt.Println("MimcHash = ", hash)
+	return hash
+}
+
 func MimcHash_BLS24_317(input string) string {
 	var x fr.Element
 	mimcHash := hash.MIMC_BLS24_317.New()

@@ -2,6 +2,7 @@ package systems
 
 import (
 	"crypto/rand"
+	"fmt"
 	"gnark/utils"
 	"gnark/utils/hashes"
 	"math/big"
@@ -13,7 +14,7 @@ import (
 	"github.com/consensys/gnark/frontend/cs/r1cs"
 )
 
-func (g16 *G16) Prove() error {
+func (g16 *G16) Prove_BN254() error {
 	var err error
 
 	// Create a limit: 2^254
@@ -27,7 +28,7 @@ func (g16 *G16) Prove() error {
 	g16.circuit.PreImage = perImage
 	g16.circuit.Hash = hash
 
-	g16.getWitness()
+	g16.getWitness(ecc.BN254.ScalarField())
 
 	g16.proof, err = groth16.Prove(g16.r1cs, g16.pk, g16.witnessFull)
 	if err != nil {
@@ -39,11 +40,37 @@ func (g16 *G16) Prove() error {
 	return nil
 }
 
-func (g16 *G16) getWitness() error {
+func (g16 *G16) Prove_BLS12_381() error {
+	var err error
+
+	// Create a limit: 2^32
+	limit := new(big.Int).Exp(big.NewInt(2), big.NewInt(32), nil)
+	// Generate a random number in the range [0, 2^32)
+	randNum, _ := rand.Int(rand.Reader, limit)
+	perImage := randNum.String()
+	hash := hashes.MimcHash_BLS12_381(perImage)
+
+	// enter inputs
+	g16.circuit.PreImage = perImage
+	g16.circuit.Hash = hash
+
+	g16.getWitness(ecc.BLS12_381.ScalarField())
+
+	g16.proof, err = groth16.Prove(g16.r1cs, g16.pk, g16.witnessFull)
+	if err != nil {
+		return err
+	}
+
+	// public inputs
+	utils.GetCalldataG16(g16.proof, []string{hash})
+	return nil
+}
+
+func (g16 *G16) getWitness(ScalarField *big.Int) error {
 
 	var err error
 
-	g16.witnessFull, err = frontend.NewWitness(&g16.circuit, ecc.BN254.ScalarField())
+	g16.witnessFull, err = frontend.NewWitness(&g16.circuit, ScalarField)
 	if err != nil {
 		return err
 	}
@@ -53,7 +80,7 @@ func (g16 *G16) getWitness() error {
 		return err
 	}
 
-	g16.witnessPublic, err = frontend.NewWitness(&g16.circuit, ecc.BN254.ScalarField(), frontend.PublicOnly())
+	g16.witnessPublic, err = frontend.NewWitness(&g16.circuit, ScalarField, frontend.PublicOnly())
 	if err != nil {
 		return err
 	}
@@ -74,9 +101,9 @@ func (g16 *G16) Verify() error {
 	return nil
 }
 
-func (g16 *G16) Compile() error {
+func (g16 *G16) Compile(ScalarField *big.Int) error {
 	var err error
-	g16.r1cs, err = frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, &g16.circuit)
+	g16.r1cs, err = frontend.Compile(ScalarField, r1cs.NewBuilder, &g16.circuit)
 	if err != nil {
 		return err
 	}
@@ -107,6 +134,8 @@ func (g16 *G16) Setup() error {
 		}
 	}
 	{
+		fmt.Printf("g16.pk: %v\n", g16.pk)
+
 		file, err := os.Create(ProvingKeyPathG16)
 		if err != nil {
 			return err
