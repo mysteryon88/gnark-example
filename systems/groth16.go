@@ -2,7 +2,6 @@ package systems
 
 import (
 	"crypto/rand"
-	"fmt"
 	"gnark/utils"
 	"gnark/utils/hashes"
 	"math/big"
@@ -36,7 +35,7 @@ func (g16 *G16) Prove_BN254() error {
 	}
 
 	// public inputs
-	utils.GetCalldataG16(g16.proof, []string{hash})
+	// utils.GetCalldataG16(g16.proof, []string{hash})
 	return nil
 }
 
@@ -62,7 +61,8 @@ func (g16 *G16) Prove_BLS12_381() error {
 	}
 
 	// public inputs
-	utils.GetCalldataG16(g16.proof, []string{hash})
+	utils.ExportProofBLS12381(g16.proof, []string{hash})
+	exportVerificationKey_groth16_bls12381()
 	return nil
 }
 
@@ -134,8 +134,6 @@ func (g16 *G16) Setup() error {
 		}
 	}
 	{
-		fmt.Printf("g16.pk: %v\n", g16.pk)
-
 		file, err := os.Create(ProvingKeyPathG16)
 		if err != nil {
 			return err

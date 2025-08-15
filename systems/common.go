@@ -19,9 +19,10 @@ const (
 	WitnessFilePathG16       = "witness/witness_g16.wtns"
 	WitnessPublicFilePathG16 = "witness/witnessPub_g16.wtns"
 	VerificationKeyPathG16   = "keys/g16.vk"
+	VKeyPathG16              = "keys/verification_key.json"
 	ProvingKeyPathG16        = "keys/g16.pk"
 	ContractFilePathG16      = "contracts/contract_g16.sol"
-	R1CSFilePathG16          = "constraints/g16.r1sc"
+	R1CSFilePathG16          = "constraints/g16.r1cs"
 
 	WitnessFilePathPLONK       = "witness/witness_plonk.wtns"
 	WitnessPublicFilePathPLONK = "witness/witnessPub_plonk.wtns"

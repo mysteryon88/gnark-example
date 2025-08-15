@@ -17,11 +17,11 @@ func main() {
 	utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
 
 	// Groth16_BN254()
-	// Groth16_BLS12_381()
+	Groth16_BLS12_381()
 	// Plonk()
 
 	// RecursiveGroth16PerformanceTest()
-	RecursivePLONKPerformanceTest()
+	// RecursivePLONKPerformanceTest()
 }
 
 func RecursiveGroth16PerformanceTest() {
