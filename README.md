@@ -4,6 +4,7 @@ zkSNARK in golang for Ethereum (groth16 and plonk)
 
 1. The research started with gnark v0.9.1
 2. Updated to v0.10.0
+3. Updated to v0.13.0
 
 - The `circuits` directory is where you place your circuits
 - In the `systems` directory, you can create proofs and verify them
