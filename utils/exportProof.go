@@ -19,10 +19,10 @@ type SnarkJSProof struct {
 }
 
 func ExportProofBLS12381(proof groth16.Proof, publicInputs []string) (SnarkJSProof, error) {
-	// BLS12-381: один Fp = 48 байт (RAW), G1 = 96, G2 = 192
+	// BLS12-381: one Fp = 48 bytes (RAW), G1 = 96, G2 = 192
 	const fpSize = 48
 
-	// сериализуем proof в RAW
+	// serialize proof in RAW
 	var buf bytes.Buffer
 	if _, err := proof.WriteRawTo(&buf); err != nil {
 		return SnarkJSProof{}, err
@@ -77,7 +77,6 @@ func writeJSON(path string, v any) error {
 	return os.WriteFile(path, b, 0o644)
 }
 
-// маленькие хелперы
 func dir(p string) string {
 	if i := len(p) - 1; i >= 0 {
 		for j := i; j >= 0; j-- {

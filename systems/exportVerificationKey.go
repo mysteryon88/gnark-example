@@ -38,7 +38,6 @@ func g2CoordsDec(p curve.G2Affine) [][]string {
 	}
 }
 
-// gtToDec раскладывает элемент GT (Fp12) в [2][3][2] десятичных строк: [c0/c1][b0..b2][a0,a1].
 func gtToDec(z curve.GT) [][][]string {
 	return [][][]string{
 		{
@@ -69,7 +68,7 @@ func exportVerificationKey_groth16_bls12381() {
 	out := VKExportAlt{
 		Protocol: "groth16",
 		Curve:    "bls12381",
-		NPublic:  len(vk.G1.K) - 1,
+		NPublic:  vk.NbPublicWitness(),
 		VKAlpha1: g1CoordsDec(vk.G1.Alpha),
 		VKBeta2:  g2CoordsDec(vk.G2.Beta),
 		VKGamma2: g2CoordsDec(vk.G2.Gamma),
