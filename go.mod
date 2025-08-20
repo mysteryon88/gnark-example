@@ -2,12 +2,11 @@ module gnark
 
 go 1.23.0
 
-toolchain go1.23.12
+require github.com/consensys/gnark-crypto v0.18.1-0.20250613145137-bf7ac9d06da2
 
-require (
-	github.com/consensys/gnark v0.13.0
-	github.com/consensys/gnark-crypto v0.18.0
-)
+require github.com/consensys/gnark v0.13.0
+
+replace github.com/consensys/gnark => C:/Users/ssobolev/Documents/GitHub/gnark
 
 require (
 	github.com/bits-and-blooms/bitset v1.22.0 // indirect

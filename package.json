@@ -1,0 +1,29 @@
+{
+  "name": "gnark-example",
+  "version": "1.0.0",
+  "description": "zkSNARK in golang for Ethereum (groth16 and plonk)",
+  "homepage": "https://github.com/mysteryon88/gnark-example#readme",
+  "bugs": {
+    "url": "https://github.com/mysteryon88/gnark-example/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mysteryon88/gnark-example.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@types/snarkjs": "^0.7.9",
+    "snarkjs": "^0.7.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.5",
+    "mocha": "^11.7.1",
+    "ts-jest": "^29.4.1"
+  }
+}

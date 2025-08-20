@@ -10,6 +10,25 @@ zkSNARK in golang for Ethereum (groth16 and plonk)
 - In the `systems` directory, you can create proofs and verify them
   - You need to replace the `interface` and add `inputs`
 
+# Test: Verifying `verification_key.json` and `proof.json` with **snarkjs**
+
+This test ensures that the exported `verification_key.json` and `proof.json` are valid for **snarkjs**.
+
+### Running the tests (BLS12-381 and BN254)
+
+```bash
+# Compilation of the circuit, generating JSON files for verification in snarkjs
+go test ./cubic -v -run TestCubicBLS12_381
+go test ./cubic -v -run TestCubicBN254
+```
+
+Then simply run:
+
+```bash
+# Verifying the generated keys and proofs in snarkjs
+npm test
+```
+
 # Recursive proofs
 
 - [Performance tests](https://github.com/mysteryon88/gnark-example/blob/main/circuits/recursive/README.md)

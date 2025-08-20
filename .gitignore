@@ -1,5 +1,6 @@
-proof
-keys
 witness
 contracts
 constraints
+vendor
+package-lock.json
+node_modules

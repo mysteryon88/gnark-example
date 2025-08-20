@@ -34,8 +34,6 @@ func (g16 *G16) Prove_BN254() error {
 		return err
 	}
 
-	// public inputs
-	// utils.GetCalldataG16(g16.proof, []string{hash})
 	return nil
 }
 
@@ -60,9 +58,10 @@ func (g16 *G16) Prove_BLS12_381() error {
 		return err
 	}
 
-	// public inputs
-	utils.ExportProofBLS12381(g16.proof, []string{hash})
-	exportVerificationKey_groth16_bls12381()
+	proof_out, _ := os.Create(ProofPathG16)
+	defer proof_out.Close()
+	g16.proof.ExportProof([]string{hash}, proof_out)
+
 	return nil
 }
 
@@ -129,6 +128,16 @@ func (g16 *G16) Setup() error {
 		}
 		defer file.Close()
 		_, err = g16.vk.WriteRawTo(file)
+		if err != nil {
+			return err
+		}
+
+		out, err := os.Create(VKeyPathG16)
+		if err != nil {
+			return err
+		}
+		defer out.Close()
+		err = g16.vk.ExportVerifyingKey(out)
 		if err != nil {
 			return err
 		}
