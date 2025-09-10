@@ -1,9 +1,13 @@
 package cubic
 
 import (
+	"fmt"
+	"gnark/utils/hashes"
 	"math/big"
 	"os"
 
+	fr_bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381/fr"
+	fr_bn254 "github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/backend/groth16"
 	groth16_bls12381 "github.com/consensys/gnark/backend/groth16/bls12-381"
 	groth16_bn254 "github.com/consensys/gnark/backend/groth16/bn254"
@@ -12,7 +16,9 @@ import (
 	gnarktosnarkjs "github.com/mysteryon88/gnark-to-snarkjs"
 )
 
-func (g16 *G16) Export(ScalarField *big.Int) error {
+var hash string
+
+func (g16 *G16) Export() error {
 
 	var ProofPath, VKeyPath string
 
@@ -36,7 +42,7 @@ func (g16 *G16) Export(ScalarField *big.Int) error {
 
 		defer proof_out.Close()
 
-		err = gnarktosnarkjs.ExportProof(g16.proof, []string{"35"}, proof_out)
+		err = gnarktosnarkjs.ExportProof(g16.proof, []string{hash}, proof_out)
 		if err != nil {
 			return err
 		}
@@ -78,9 +84,22 @@ func (g16 *G16) Setup() error {
 func (g16 *G16) Prove(ScalarField *big.Int) error {
 	var err error
 
+	perImage := "500304"
+
+	switch {
+	case ScalarField.Cmp(fr_bn254.Modulus()) == 0:
+		hash = hashes.MimcHash_BN254(perImage)
+
+	case ScalarField.Cmp(fr_bls12381.Modulus()) == 0:
+		hash = hashes.MimcHash_BLS12_381(perImage)
+
+	default:
+		return fmt.Errorf("unsupported scalar field modulus: %s", ScalarField.String())
+	}
+
 	// enter inputs
-	g16.circuit.X = 3
-	g16.circuit.Y = 35
+	g16.circuit.PreImage = perImage
+	g16.circuit.Hash = hash
 
 	g16.getWitness(ScalarField)
 

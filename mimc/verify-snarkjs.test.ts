@@ -8,7 +8,7 @@ function loadJson(p: string): any {
 }
 
 // npm test
-describe("(Cubic) snarkjs verify (Groth16) BLS12-381", () => {
+describe("(Mimc) snarkjs verify (Groth16) BLS12-381", () => {
   it("verifies proof.json with verification_key.json", async () => {
     const vkey = loadJson("keys/verification_key_bls12381.json");
     const proof = loadJson("proofs/proof_bls12381.json");
@@ -21,14 +21,14 @@ describe("(Cubic) snarkjs verify (Groth16) BLS12-381", () => {
     const vkey = loadJson("keys/verification_key_bls12381.json");
     const proof = loadJson("proofs/proof_bls12381.json");
 
-    const wrongPublicSignals: string[] = ["99"];
+    const wrongPublicSignals: string[] = ["453423"];
 
     const ok = await groth16.verify(vkey, wrongPublicSignals, proof);
     expect(ok).toBe(false); // здесь должно быть false
   });
 });
 
-describe("(Cubic) snarkjs verify (Groth16) BN254", () => {
+describe("(Mimc) snarkjs verify (Groth16) BN254", () => {
   it("verifies proof.json with verification_key.json", async () => {
     const vkey = loadJson("keys/verification_key_bn254.json");
     const proof = loadJson("proofs/proof_bn254.json");
@@ -41,7 +41,7 @@ describe("(Cubic) snarkjs verify (Groth16) BN254", () => {
     const vkey = loadJson("keys/verification_key_bn254.json");
     const proof = loadJson("proofs/proof_bn254.json");
 
-    const wrongPublicSignals: string[] = ["99"];
+    const wrongPublicSignals: string[] = ["453423"];
 
     const ok = await groth16.verify(vkey, wrongPublicSignals, proof);
     expect(ok).toBe(false); // здесь должно быть false

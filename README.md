@@ -14,12 +14,19 @@ zkSNARK in golang for Ethereum (groth16 and plonk)
 
 This test ensures that the exported `verification_key.json` and `proof.json` are valid for **snarkjs**.
 
+```sh
+go get github.com/mysteryon88/gnark-to-snarkjs@latest
+```
+
 ### Running the tests (BLS12-381 and BN254)
 
 ```bash
 # Compilation of the circuit, generating JSON files for verification in snarkjs
 go test ./cubic -v -run TestCubicBLS12_381
 go test ./cubic -v -run TestCubicBN254
+
+go test ./mimc -v -run TestMimcBLS12_381
+go test ./mimc -v -run TestMimcBN254
 ```
 
 Then simply run:

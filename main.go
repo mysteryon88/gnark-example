@@ -8,17 +8,13 @@ import (
 	"gnark/circuits/recursive/plonk"
 	"gnark/systems"
 	"gnark/utils"
-
-	"github.com/consensys/gnark-crypto/ecc"
 )
 
 func main() {
 	// you need these directories
 	utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
 
-	// Groth16_BN254()
-	Groth16_BLS12_381()
-	// Plonk()
+	Plonk()
 
 	// RecursiveGroth16PerformanceTest()
 	// RecursivePLONKPerformanceTest()
@@ -46,22 +42,6 @@ func RecursivePLONKPerformanceTest() {
 	plonk.BW6_761inBN254()
 	duration = time.Since(start)
 	fmt.Printf("Execution time: %v ms\n", duration.Milliseconds())
-}
-
-func Groth16_BN254() {
-	g16 := systems.G16{}
-	g16.Compile(ecc.BN254.ScalarField())
-	g16.Setup()
-	g16.Prove_BN254()
-	g16.Verify()
-}
-
-func Groth16_BLS12_381() {
-	g16 := systems.G16{}
-	g16.Compile(ecc.BLS12_381.ScalarField())
-	g16.Setup()
-	g16.Prove_BLS12_381()
-	g16.Verify()
 }
 
 func Plonk() {
