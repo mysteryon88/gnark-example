@@ -19,7 +19,10 @@ This test ensures that the exported `verification_key.json` and `proof.json` are
 ```bash
 # Compilation of the circuit, generating JSON files for verification in snarkjs
 go test ./cubic -v -run TestCubicBLS12_381
-go test ./cubic -v -run TestCubicBN254
+go test ./cubic -v -run TestCubicBN254\
+
+go test ./mimc -v -run TestMimcBLS12_381
+go test ./mimc -v -run TestMimcBN254
 ```
 
 Then simply run:
