@@ -7,8 +7,8 @@ import (
 	"github.com/consensys/gnark-crypto/ecc"
 )
 
-// go test ./cubic -v -run TestCubicBLS12_381
-func TestCubicBLS12_381(t *testing.T) {
+// go test ./mimc -v -run TestMimcBLS12_381
+func TestMimcBLS12_381(t *testing.T) {
 	utils.CheckDirs([]string{"proofs", "keys"})
 
 	g16 := G16{}
@@ -20,8 +20,8 @@ func TestCubicBLS12_381(t *testing.T) {
 	g16.Export()
 }
 
-// go test ./cubic -v -run TestCubicBN254
-func TestCubicBN254(t *testing.T) {
+// go test ./mimc -v -run TestMimcBN254
+func TestMimcBN254(t *testing.T) {
 	utils.CheckDirs([]string{"proofs", "keys"})
 	g16 := G16{}
 
