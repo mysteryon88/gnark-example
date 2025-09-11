@@ -22,11 +22,20 @@ go get github.com/mysteryon88/gnark-to-snarkjs@latest
 
 ```bash
 # Compilation of the circuit, generating JSON files for verification in snarkjs
-go test ./cubic -v -run TestCubicBLS12_381
 go test ./cubic -v -run TestCubicBN254
+go test ./cubic -v -run TestCubicBLS12_381
 
-go test ./mimc -v -run TestMimcBLS12_381
 go test ./mimc -v -run TestMimcBN254
+go test ./mimc -v -run TestMimcBLS12_381
+
+go test ./commitments -v -run TestNoCommitment_BN254
+go test ./commitments -v -run TestNoCommitment_BLS12381
+
+# error
+go test ./commitments -v -run TestSingleCommitment_BN254
+go test ./commitments -v -run TestSingleCommitment_BLS12381
+go test ./commitments -v -run TestTwoCommitments_BN254
+go test ./commitments -v -run TestTwoCommitments_BLS12381
 ```
 
 Then simply run:
@@ -53,7 +62,7 @@ npm test
 > [!NOTE]
 >
 > - BN254 is used in Ethereum 1.x.
-> - BLS12-381 in Ethereum 2.0, ZCash Sapling, Algorand, Dfinity, Chia, and Filecoin.
+> - BLS12-381 in Ethereum 2.0, TON, ZCash Sapling, Algorand, Dfinity, Chia, and Filecoin.
 > - BLS12-377/BW6-761 in Celo, Aleo and EY.
 >
 > For applications that target Ethereum 1.x mainnet, BN254 is the only supported curve.

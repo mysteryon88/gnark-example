@@ -22,6 +22,8 @@ func TestNoCommitment_BN254(t *testing.T) {
 	err := g16.Export()
 	assert.NoError(t, err)
 }
+
+// go test ./commitments -v -run TestNoCommitment_BLS12381
 func TestNoCommitment_BLS12381(t *testing.T) {
 	utils.CheckDirs([]string{"proofs", "keys"})
 
