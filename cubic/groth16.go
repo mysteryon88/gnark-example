@@ -12,7 +12,7 @@ import (
 	gnarktosnarkjs "github.com/mysteryon88/gnark-to-snarkjs"
 )
 
-func (g16 *G16) Export(ScalarField *big.Int) error {
+func (g16 *G16) Export() error {
 
 	var ProofPath, VKeyPath string
 

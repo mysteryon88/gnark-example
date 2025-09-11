@@ -4,3 +4,6 @@ constraints
 vendor
 package-lock.json
 node_modules
+
+keys
+proofs

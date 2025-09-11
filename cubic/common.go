@@ -1,7 +1,7 @@
 package cubic
 
 import (
-	"gnark/circuits/cubic"
+	"gnark_example/circuits/cubic"
 
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/backend/witness"

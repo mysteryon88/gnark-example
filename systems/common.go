@@ -1,7 +1,7 @@
 package systems
 
 import (
-	"gnark/circuits/mimc"
+	"gnark_example/circuits/mimc"
 
 	"github.com/consensys/gnark-crypto/kzg"
 	"github.com/consensys/gnark/backend/groth16"

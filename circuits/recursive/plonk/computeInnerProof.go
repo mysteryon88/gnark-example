@@ -5,7 +5,7 @@ package plonk
 import (
 	"math/big"
 
-	"gnark/circuits/recursive"
+	"gnark_example/circuits/recursive"
 
 	native_plonk "github.com/consensys/gnark/backend/plonk"
 	"github.com/consensys/gnark/backend/witness"

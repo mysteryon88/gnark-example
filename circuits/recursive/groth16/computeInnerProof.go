@@ -5,7 +5,7 @@ package groth16
 import (
 	"math/big"
 
-	"gnark/circuits/recursive"
+	"gnark_example/circuits/recursive"
 
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/backend/witness"

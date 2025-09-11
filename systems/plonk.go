@@ -3,8 +3,8 @@ package systems
 import (
 	"crypto/rand"
 	"fmt"
-	"gnark/utils"
-	"gnark/utils/hashes"
+	"gnark_example/utils"
+	"gnark_example/utils/hashes"
 	"math/big"
 	"os"
 

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"gnark/circuits/recursive/groth16"
-	"gnark/circuits/recursive/plonk"
-	"gnark/systems"
-	"gnark/utils"
+	"gnark_example/circuits/recursive/groth16"
+	"gnark_example/circuits/recursive/plonk"
+	"gnark_example/systems"
+	"gnark_example/utils"
 )
 
 func main() {

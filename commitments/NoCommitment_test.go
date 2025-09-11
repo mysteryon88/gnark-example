@@ -1,6 +1,7 @@
-package cubic
+package commits
 
 import (
+	"gnark_example/commitments/groth16"
 	"gnark_example/utils"
 	"testing"
 
@@ -8,10 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// go test ./cubic -v -run TestCubicBN254
-func TestCubicBN254(t *testing.T) {
+// go test ./commitments -v -run TestNoCommitment_BN254
+func TestNoCommitment_BN254(t *testing.T) {
 	utils.CheckDirs([]string{"proofs", "keys"})
-	g16 := G16{}
+
+	g16 := groth16.G16_no_commit{}
 
 	g16.Compile(ecc.BN254.ScalarField())
 	g16.Setup()
@@ -20,12 +22,10 @@ func TestCubicBN254(t *testing.T) {
 	err := g16.Export()
 	assert.NoError(t, err)
 }
-
-// go test ./cubic -v -run TestCubicBLS12_381
-func TestCubicBLS12_381(t *testing.T) {
+func TestNoCommitment_BLS12381(t *testing.T) {
 	utils.CheckDirs([]string{"proofs", "keys"})
 
-	g16 := G16{}
+	g16 := groth16.G16_no_commit{}
 
 	g16.Compile(ecc.BLS12_381.ScalarField())
 	g16.Setup()
