@@ -41,7 +41,7 @@ func ExportProofBLS12381(proof groth16.Proof, publicInputs []string) (SnarkJSPro
 	Ax := readBig(fpSize)
 	Ay := readBig(fpSize)
 
-	// B (Fp2: X=(x1,x0), Y=(y1,y0) — как в pi_b snarkjs)
+	// B (Fp2: X=(x1,x0), Y=(y1,y0) — as in pi_b snarkjs)
 	Bx1 := readBig(fpSize)
 	Bx0 := readBig(fpSize)
 	By1 := readBig(fpSize)

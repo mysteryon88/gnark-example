@@ -24,7 +24,7 @@ describe("(Cubic) snarkjs verify (Groth16) BLS12-381", () => {
     const wrongPublicSignals: string[] = ["99"];
 
     const ok = await groth16.verify(vkey, wrongPublicSignals, proof);
-    expect(ok).toBe(false); // здесь должно быть false
+    expect(ok).toBe(false);
   });
 });
 
@@ -44,6 +44,6 @@ describe("(Cubic) snarkjs verify (Groth16) BN254", () => {
     const wrongPublicSignals: string[] = ["99"];
 
     const ok = await groth16.verify(vkey, wrongPublicSignals, proof);
-    expect(ok).toBe(false); // здесь должно быть false
+    expect(ok).toBe(false);
   });
 });
