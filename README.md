@@ -41,13 +41,13 @@ go test ./commitments -v -run TestTwoCommitments_BLS12381
 Then simply run:
 
 ```bash
-# Verifying the generated keys and proofs in snarkjs
+# Generates the required JSON artifacts and verifies them with snarkjs
 npm test
 ```
 
 # Recursive proofs
 
-- [Performance tests](https://github.com/mysteryon88/gnark-example/blob/main/circuits/recursive/README.md)
+- [Performance tests](/circuits/recursive/README.md)
 
 # elliptic curves
 

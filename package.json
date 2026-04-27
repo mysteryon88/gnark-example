@@ -14,16 +14,17 @@
   "author": "",
   "main": "index.js",
   "scripts": {
+    "pretest": "node scripts/generate-snarkjs-artifacts.cjs",
     "test": "jest"
   },
   "dependencies": {
     "@types/snarkjs": "^0.7.9",
-    "snarkjs": "^0.7.5"
+    "snarkjs": "^0.7.6"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "jest": "^30.0.5",
-    "mocha": "^11.7.1",
-    "ts-jest": "^29.4.1"
+    "jest": "^30.3.0",
+    "mocha": "^11.7.5",
+    "ts-jest": "^29.4.9"
   }
 }

@@ -8,5 +8,5 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
-  forceExit: true,
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
 };

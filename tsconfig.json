@@ -4,12 +4,20 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "strict": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "types": ["jest", "node"],
+    "rootDir": ".",
     "outDir": "./dist"
   },
-  "include": ["cubic/**/*.ts"]
+  "include": [
+    "commitments/**/*.ts",
+    "cubic/**/*.ts",
+    "eddsa/**/*.ts",
+    "merkle_proof/**/*.ts",
+    "mimc/**/*.ts"
+  ]
 }

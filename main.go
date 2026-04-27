@@ -14,10 +14,10 @@ func main() {
 	// you need these directories
 	utils.CheckDirs([]string{"proof", "contracts", "keys", "witness", "constraints"})
 
-	Plonk()
+	// Plonk()
 
 	// RecursiveGroth16PerformanceTest()
-	// RecursivePLONKPerformanceTest()
+	RecursivePLONKPerformanceTest()
 }
 
 func RecursiveGroth16PerformanceTest() {
