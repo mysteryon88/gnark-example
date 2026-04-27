@@ -3,12 +3,17 @@ package hashes
 import (
 	"fmt"
 
-	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
+	frbls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381/fr"
+	frbls24317 "github.com/consensys/gnark-crypto/ecc/bls24-317/fr"
+	frbn254 "github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark-crypto/hash"
+	_ "github.com/consensys/gnark-crypto/ecc/bls12-381/fr/mimc"
+	_ "github.com/consensys/gnark-crypto/ecc/bls24-317/fr/mimc"
+	_ "github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 )
 
 func MimcHash_BN254(input string) string {
-	var x fr.Element
+	var x frbn254.Element
 	mimcHash := hash.MIMC_BN254.New()
 	// to fild
 	x.SetString(input)
@@ -27,7 +32,7 @@ func MimcHash_BN254(input string) string {
 }
 
 func MimcHash_BLS12_381(input string) string {
-	var x fr.Element
+	var x frbls12381.Element
 	mimcHash := hash.MIMC_BLS12_381.New()
 	// to fild
 	x.SetString(input)
@@ -46,7 +51,7 @@ func MimcHash_BLS12_381(input string) string {
 }
 
 func MimcHash_BLS24_317(input string) string {
-	var x fr.Element
+	var x frbls24317.Element
 	mimcHash := hash.MIMC_BLS24_317.New()
 	// to fild
 	x.SetString(input)

@@ -9,7 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "types": ["jest", "node"],
+    "rootDir": ".",
     "outDir": "./dist"
   },
-  "include": ["cubic/**/*.ts"]
+  "include": ["cubic/**/*.ts", "mimc/**/*.ts"]
 }
