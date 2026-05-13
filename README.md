@@ -1,3 +1,5 @@
+NEW REPO: https://github.com/zk-examples/gnark-examples
+
 # A template for using gnark
 
 zkSNARK in golang for Ethereum (groth16 and plonk)
